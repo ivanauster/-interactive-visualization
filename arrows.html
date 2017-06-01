@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+#licensing {
+  fill: green;
+}
+
+.link.licensing {
+  stroke: green;
+}
+
+.link.resolved {
+  stroke-dasharray: 0,2 1;
+}
+
+circle {
+  fill: #ccc;
+  stroke: #333;
+  stroke-width: 1.5px;
+}
+
+text {
+  font: 10px sans-serif;
+  pointer-events: none;
+  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+}
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+// http://blog.thomsonreuters.com/index.php/mobile-patent-suits-graphic-of-the-day/
+var links = [
+ {source: "javascript", target: "jquery", number: "442563"},
+ {source: "javascript", target: "html", number: "250414"},
+ {source: "javascript", target: "css", number: "115987"},
+ {source: "javascript", target: "angularjs", number: "101770"},
+ {source: "javascript", target: "php", number: "92619"},
+ {source: "javascript", target: "ajax", number: "73712"},
+ {source: "javascript", target: "node.js", number: "60655"},
+ {source: "javascript", target: "json", number: "45355"},
+ {source: "javascript", target: "html5", number: "44746"},
+ {source: "javascript", target: "arrays", number: "33276"},
+ {source: "javascript", target: "asp.net", number: "28627"},
+ {source: "javascript", target: "regex", number: "22947"},
+ {source: "javascript", target: "twitter-bootstrap", number: "20609"},
+ {source: "javascript", target: "c#", number: "19874"},
+ {source: "javascript", target: "forms", number: "19094"},
+ {source: "javascript", target: "reactjs", number: "17797"},
+ {source: "javascript", target: "google-chrome", number: "17520"},
+ {source: "javascript", target: "d3.js", number: "16614"},
+ {source: "javascript", target: "dom", number: "16364"},
+ {source: "javascript", target: "google-maps", number: "15845"},
+ {source: "javascript", target: "java", number: "14936"},
+ {source: "javascript", target: "canvas", number: "14142"},
+ {source: "javascript", target: "jquery-ui", number: "12740"},
+ {source: "javascript", target: "ruby-on-rails", number: "12590"},
+ {source: "javascript", target: "android", number: "11984"},
+ {source: "java", target: "android", number: "175630"},
+ {source: "java", target: "swing", number: "64120"},
+ {source: "java", target: "spring", number: "62467"},
+ {source: "java", target: "eclipse", number: "47735"},
+ {source: "java", target: "hibernate", number: "37532"},
+ {source: "java", target: "arrays", number: "33554"},
+ {source: "java", target: "multithreading", number: "27786"},
+ {source: "java", target: "xml", number: "26808"},
+ {source: "java", target: "maven", number: "25324"},
+ {source: "java", target: "json", number: "23170"},
+ {source: "java", target: "jsp", number: "22795"},
+ {source: "java", target: "string", number: "22716"},
+ {source: "java", target: "spring-mvc", number: "21791"},
+ {source: "java", target: "mysql", number: "20296"},
+ {source: "java", target: "servlets", number: "19109"},
+ {source: "java", target: "jpa", number: "17471"},
+ {source: "java", target: "tomcat", number: "17363"},
+ {source: "java", target: "regex", number: "16960"},
+ {source: "java", target: "arraylist", number: "16853"},
+ {source: "java", target: "jdbc", number: "15502"},
+ {source: "java", target: "javascript", number: "14936"},
+ {source: "java", target: "java-ee", number: "14856"},
+ {source: "java", target: "web-services", number: "12781"},
+ {source: "java", target: "sql", number: "12046"},
+ {source: "java", target: "generics", number: "11899"},
+ {source: "c#", target: ".net", number: "151321"},
+ {source: "c#", target: "asp.net", number: "138748"},
+ {source: "c#", target: "wpf", number: "74338"},
+ {source: "c#", target: "winforms", number: "57666"},
+ {source: "c#", target: "asp.net-mvc", number: "55405"},
+ {source: "c#", target: "linq", number: "46228"},
+ {source: "c#", target: "entity-framework", number: "36618"},
+ {source: "c#", target: "xaml", number: "26334"},
+ {source: "c#", target: "sql", number: "24293"},
+ {source: "c#", target: "sql-server", number: "23762"},
+ {source: "c#", target: "xml", number: "22271"},
+ {source: "c#", target: "wcf", number: "20266"},
+ {source: "c#", target: "visual-studio", number: "20038"},
+ {source: "c#", target: "javascript", number: "19873"},
+ {source: "c#", target: "multithreading", number: "18533"},
+ {source: "c#", target: "asp.net-mvc-4", number: "14450"},
+ {source: "c#", target: "json", number: "14328"},
+ {source: "c#", target: "jquery", number: "13902"},
+ {source: "c#", target: "visual-studio-2010", number: "13484"},
+ {source: "c#", target: "regex", number: "13288"},
+ {source: "c#", target: "windows", number: "12002"},
+ {source: "c#", target: "arrays", number: "11644"},
+ {source: "c#", target: "vb.net", number: "11590"},
+ {source: "c#", target: "string", number: "11540"},
+ {source: "c#", target: "generics", number: "11494"},
+ {source: "php", target: "mysql", number: "186980"},
+ {source: "php", target: "javascript", number: "92619"},
+ {source: "php", target: "html", number: "81572"},
+ {source: "php", target: "jquery", number: "76502"},
+ {source: "php", target: "wordpress", number: "52306"},
+ {source: "php", target: "arrays", number: "50553"},
+ {source: "php", target: "ajax", number: "47396"},
+ {source: "php", target: "codeigniter", number: "38215"},
+ {source: "php", target: "laravel", number: "36756"},
+ {source: "php", target: "sql", number: "36725"},
+ {source: "php", target: "json", number: "28494"},
+ {source: "php", target: "forms", number: "25048"},
+ {source: "php", target: "regex", number: "24571"},
+ {source: "php", target: "symfony", number: "22837"},
+ {source: "php", target: "apache", number: "21286"},
+ {source: "php", target: "database", number: "20094"},
+ {source: "php", target: ".htaccess", number: "19678"},
+ {source: "php", target: "mysqli", number: "17662"},
+ {source: "php", target: "pdo", number: "16579"},
+ {source: "php", target: "curl", number: "16505"},
+ {source: "php", target: "css", number: "15714"},
+ {source: "php", target: "session", number: "15564"},
+ {source: "php", target: "xml", number: "14939"},
+ {source: "php", target: "email", number: "13722"},
+ {source: "php", target: "cakephp", number: "12297"},
+ {source: "android", target: "java", number: "175630"},
+ {source: "android", target: "listview", number: "44495"},
+ {source: "android", target: "android-layout", number: "42173"},
+ {source: "android", target: "android-fragments", number: "30640"},
+ {source: "android", target: "android-studio", number: "29998"},
+ {source: "android", target: "eclipse", number: "25367"},
+ {source: "android", target: "android-intent", number: "23778"},
+ {source: "android", target: "android-activity", number: "22609"},
+ {source: "android", target: "sqlite", number: "22600"},
+ {source: "android", target: "xml", number: "21898"},
+ {source: "android", target: "json", number: "18680"},
+ {source: "android", target: "cordova", number: "18181"},
+ {source: "android", target: "google-maps", number: "14269"},
+ {source: "android", target: "android-asynctask", number: "12225"},
+ {source: "android", target: "javascript", number: "11984"},
+ {source: "android", target: "ios", number: "11411"},
+ {source: "android", target: "webview", number: "11014"},
+ {source: "android", target: "facebook", number: "10164"},
+ {source: "android", target: "php", number: "9759"},
+ {source: "android", target: "recyclerview", number: "9573"},
+ {source: "android", target: "image", number: "9168"},
+ {source: "android", target: "layout", number: "8975"},
+ {source: "android", target: "gradle", number: "8780"},
+ {source: "android", target: "android-edittext", number: "8777"},
+ {source: "android", target: "android-ndk", number: "8371"},
+ {source: "jquery", target: "javascript", number: "442563"},
+ {source: "jquery", target: "html", number: "171637"},
+ {source: "jquery", target: "css", number: "103874"},
+ {source: "jquery", target: "ajax", number: "93013"},
+ {source: "jquery", target: "php", number: "76502"},
+ {source: "jquery", target: "json", number: "30234"},
+ {source: "jquery", target: "jquery-ui", number: "28786"},
+ {source: "jquery", target: "asp.net", number: "22921"},
+ {source: "jquery", target: "twitter-bootstrap", number: "22577"},
+ {source: "jquery", target: "html5", number: "19801"},
+ {source: "jquery", target: "asp.net-mvc", number: "16693"},
+ {source: "jquery", target: "forms", number: "15497"},
+ {source: "jquery", target: "c#", number: "13902"},
+ {source: "jquery", target: "angularjs", number: "13397"},
+ {source: "jquery", target: "jquery-mobile", number: "11795"},
+ {source: "jquery", target: "jquery-plugins", number: "10802"},
+ {source: "jquery", target: "wordpress", number: "10736"},
+ {source: "jquery", target: "ruby-on-rails", number: "10442"},
+ {source: "jquery", target: "css3", number: "10292"},
+ {source: "jquery", target: "arrays", number: "9535"},
+ {source: "jquery", target: "mysql", number: "9083"},
+ {source: "jquery", target: "datatables", number: "8150"},
+ {source: "jquery", target: "validation", number: "7748"},
+ {source: "jquery", target: "dom", number: "7710"},
+ {source: "jquery", target: "jquery-selectors", number: "7391"},
+ {source: "python", target: "django", number: "70184"},
+ {source: "python", target: "python-2.7", number: "42417"},
+ {source: "python", target: "python-3.x", number: "36920"},
+ {source: "python", target: "pandas", number: "34247"},
+ {source: "python", target: "numpy", number: "30597"},
+ {source: "python", target: "list", number: "23776"},
+ {source: "python", target: "matplotlib", number: "19067"},
+ {source: "python", target: "dictionary", number: "16794"},
+ {source: "python", target: "regex", number: "16337"},
+ {source: "python", target: "string", number: "13046"},
+ {source: "python", target: "flask", number: "12826"},
+ {source: "python", target: "tkinter", number: "12743"},
+ {source: "python", target: "arrays", number: "11430"},
+ {source: "python", target: "csv", number: "11329"},
+ {source: "python", target: "google-app-engine", number: "10835"},
+ {source: "python", target: "json", number: "9669"},
+ {source: "python", target: "mysql", number: "8617"},
+ {source: "python", target: "html", number: "8472"},
+ {source: "python", target: "linux", number: "8306"},
+ {source: "python", target: "scipy", number: "7866"},
+ {source: "python", target: "multithreading", number: "7603"},
+ {source: "python", target: "sqlalchemy", number: "7441"},
+ {source: "python", target: "beautifulsoup", number: "7242"},
+ {source: "python", target: "windows", number: "7191"},
+ {source: "python", target: "dataframe", number: "7097"}
+];
+
+var nodes = {};
+
+// Compute the distinct nodes from the links.
+links.forEach(function(link) {
+  link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
+  link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
+});
+
+var width = 1300,
+    height = 580;
+
+var force = d3.layout.force()
+    .nodes(d3.values(nodes))
+    .links(links)
+    .size([width, height])
+    .linkDistance(60)
+    .charge(-300)
+    .on("tick", tick)
+    .start();
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+// Per-type markers, as they don't inherit styles.
+svg.append("defs").selectAll("marker")
+    .data(["suit", "licensing", "resolved"])
+  .enter().append("marker")
+    .attr("id", function(d) { return d; })
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 15)
+    .attr("refY", -1.5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+  .append("path")
+    .attr("d", "M0,-5L10,0L0,5");
+
+var path = svg.append("g").selectAll("path")
+    .data(force.links())
+  .enter().append("path")
+    .attr("class", function(d) { return "link " + d.type; })
+    .attr("marker-end", function(d) { return "url(#" + d.type + ")"; });
+
+var circle = svg.append("g").selectAll("circle")
+    .data(force.nodes())
+  .enter().append("circle")
+    .attr("r", 10)
+    .call(force.drag);
+
+var text = svg.append("g").selectAll("text")
+    .data(force.nodes())
+  .enter().append("text")
+    .attr("x", 8)
+    .attr("y", ".31em")
+    .text(function(d) { return d.name; });
+
+// Use elliptical arc path segments to doubly-encode directionality.
+function tick() {
+  path.attr("d", linkArc);
+  circle.attr("transform", transform);
+  text.attr("transform", transform);
+}
+
+function linkArc(d) {
+  var dx = d.target.x - d.source.x,
+      dy = d.target.y - d.source.y,
+      dr = Math.sqrt(dx * dx + dy * dy);
+  return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+}
+
+function transform(d) {
+  return "translate(" + d.x + "," + d.y + ")";
+}
+
+</script>
+
