@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+#licensing {
+  fill: green;
+}
+
+.link.licensing {
+  stroke: green;
+}
+
+.link.resolved {
+  stroke-dasharray: 0,2 1;
+}
+
+circle {
+  fill: #ccc;
+  stroke: #333;
+  stroke-width: 1.5px;
+}
+
+text {
+  font: 10px sans-serif;
+  pointer-events: none;
+  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+}
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+var links = [
+ {source: "javascript", target: "jquery", number: "442563"},
+ {source: "javascript", target: "html", number: "250414"},
+ {source: "javascript", target: "css", number: "115987"},
+ {source: "javascript", target: "angularjs", number: "101770"},
+ {source: "javascript", target: "php", number: "92619"},
+ {source: "javascript", target: "ajax", number: "73712"},
+ {source: "javascript", target: "node.js", number: "60655"},
+ {source: "javascript", target: "json", number: "45355"},
+ {source: "javascript", target: "html5", number: "44746"},
+ {source: "javascript", target: "arrays", number: "33276"},
+ {source: "java", target: "android", number: "175630"},
+ {source: "java", target: "swing", number: "64120"},
+ {source: "java", target: "spring", number: "62467"},
+ {source: "java", target: "eclipse", number: "47735"},
+ {source: "java", target: "hibernate", number: "37532"},
+ {source: "java", target: "arrays", number: "33554"},
+ {source: "java", target: "multithreading", number: "27786"},
+ {source: "java", target: "xml", number: "26808"},
+ {source: "java", target: "maven", number: "25324"},
+ {source: "java", target: "json", number: "23170"},
+ {source: "c#", target: ".net", number: "151321"},
+ {source: "c#", target: "asp.net", number: "138748"},
+ {source: "c#", target: "wpf", number: "74338"},
+ {source: "c#", target: "winforms", number: "57666"},
+ {source: "c#", target: "asp.net-mvc", number: "55405"},
+ {source: "c#", target: "linq", number: "46228"},
+ {source: "c#", target: "entity-framework", number: "36618"},
+ {source: "c#", target: "xaml", number: "26334"},
+ {source: "c#", target: "sql", number: "24293"},
+ {source: "c#", target: "sql-server", number: "23762"},
+ {source: "php", target: "mysql", number: "186980"},
+ {source: "php", target: "javascript", number: "92619"},
+ {source: "php", target: "html", number: "81572"},
+ {source: "php", target: "jquery", number: "76502"},
+ {source: "php", target: "wordpress", number: "52306"},
+ {source: "php", target: "arrays", number: "50553"},
+ {source: "php", target: "ajax", number: "47396"},
+ {source: "php", target: "codeigniter", number: "38215"},
+ {source: "php", target: "laravel", number: "36756"},
+ {source: "php", target: "sql", number: "36725"},
+ {source: "android", target: "java", number: "175630"},
+ {source: "android", target: "listview", number: "44495"},
+ {source: "android", target: "android-layout", number: "42173"},
+ {source: "android", target: "android-fragments", number: "30640"},
+ {source: "android", target: "android-studio", number: "29998"},
+ {source: "android", target: "eclipse", number: "25367"},
+ {source: "android", target: "android-intent", number: "23778"},
+ {source: "android", target: "android-activity", number: "22609"},
+ {source: "android", target: "sqlite", number: "22600"},
+ {source: "android", target: "xml", number: "21898"},
+ {source: "jquery", target: "javascript", number: "442563"},
+ {source: "jquery", target: "html", number: "171637"},
+ {source: "jquery", target: "css", number: "103874"},
+ {source: "jquery", target: "ajax", number: "93013"},
+ {source: "jquery", target: "php", number: "76502"},
+ {source: "jquery", target: "json", number: "30234"},
+ {source: "jquery", target: "jquery-ui", number: "28786"},
+ {source: "jquery", target: "asp.net", number: "22921"},
+ {source: "jquery", target: "twitter-bootstrap", number: "22577"},
+ {source: "jquery", target: "html5", number: "19801"},
+ {source: "python", target: "django", number: "70184"},
+ {source: "python", target: "python-2.7", number: "42417"},
+ {source: "python", target: "python-3.x", number: "36920"},
+ {source: "python", target: "pandas", number: "34247"},
+ {source: "python", target: "numpy", number: "30597"},
+ {source: "python", target: "list", number: "23776"},
+ {source: "python", target: "matplotlib", number: "19067"},
+ {source: "python", target: "dictionary", number: "16794"},
+ {source: "python", target: "regex", number: "16337"},
+ {source: "python", target: "string", number: "13046"},
+ {source: "html", target: "css", number: "270912"},
+ {source: "html", target: "javascript", number: "250414"},
+ {source: "html", target: "jquery", number: "171637"},
+ {source: "html", target: "php", number: "81572"},
+ {source: "html", target: "twitter-bootstrap", number: "27482"},
+ {source: "html", target: "css3", number: "26929"},
+ {source: "html", target: "html5", number: "23570"},
+ {source: "html", target: "forms", number: "18805"},
+ {source: "html", target: "angularjs", number: "16060"},
+ {source: "html", target: "ajax", number: "14931"},
+ {source: "c++", target: "c++11", number: "31965"},
+ {source: "c++", target: "c", number: "31619"},
+ {source: "c++", target: "qt", number: "29070"},
+ {source: "c++", target: "templates", number: "19992"},
+ {source: "c++", target: "boost", number: "17529"},
+ {source: "c++", target: "arrays", number: "16800"},
+ {source: "c++", target: "windows", number: "15739"},
+ {source: "c++", target: "pointers", number: "15072"},
+ {source: "c++", target: "opencv", number: "13899"},
+ {source: "c++", target: "vector", number: "12999"},
+ {source: "ios", target: "objective-c", number: "153487"},
+ {source: "ios", target: "iphone", number: "93532"},
+ {source: "ios", target: "swift", number: "87225"},
+ {source: "ios", target: "xcode", number: "58394"},
+ {source: "ios", target: "uitableview", number: "35316"},
+ {source: "ios", target: "ipad", number: "18333"},
+ {source: "ios", target: "cocoa-touch", number: "16961"},
+ {source: "ios", target: "core-data", number: "13758"},
+ {source: "ios", target: "android", number: "11411"},
+ {source: "ios", target: "uiview", number: "10686"},
+ {source: "css", target: "html", number: "270912"},
+ {source: "css", target: "javascript", number: "115987"},
+ {source: "css", target: "jquery", number: "103874"},
+ {source: "css", target: "css3", number: "40209"},
+ {source: "css", target: "twitter-bootstrap", number: "34636"},
+ {source: "css", target: "html5", number: "19918"},
+ {source: "css", target: "php", number: "15714"},
+ {source: "css", target: "wordpress", number: "10590"},
+ {source: "css", target: "image", number: "9115"},
+ {source: "css", target: "internet-explorer", number: "8409"},
+ {source: "mysql", target: "php", number: "186980"},
+ {source: "mysql", target: "sql", number: "88230"},
+ {source: "mysql", target: "database", number: "34892"},
+ {source: "mysql", target: "java", number: "20296"},
+ {source: "mysql", target: "html", number: "12590"},
+ {source: "mysql", target: "join", number: "11237"},
+ {source: "mysql", target: "javascript", number: "10676"},
+ {source: "mysql", target: "pdo", number: "10384"},
+ {source: "mysql", target: "mysqli", number: "9221"},
+ {source: "mysql", target: "jquery", number: "9083"},
+ {source: "sql", target: "mysql", number: "88230"},
+ {source: "sql", target: "sql-server", number: "83785"},
+ {source: "sql", target: "php", number: "36725"},
+ {source: "sql", target: "oracle", number: "35084"},
+ {source: "sql", target: "database", number: "27912"},
+ {source: "sql", target: "c#", number: "24293"},
+ {source: "sql", target: "sql-server-2008", number: "23122"},
+ {source: "sql", target: "tsql", number: "22993"},
+ {source: "sql", target: "postgresql", number: "17896"},
+ {source: "sql", target: "java", number: "12046"},
+ {source: "asp.net", target: "c#", number: "138748"},
+ {source: "asp.net", target: "javascript", number: "28627"},
+ {source: "asp.net", target: "asp.net-mvc", number: "28459"},
+ {source: "asp.net", target: "jquery", number: "22921"},
+ {source: "asp.net", target: ".net", number: "21052"},
+ {source: "asp.net", target: "vb.net", number: "16336"},
+ {source: "asp.net", target: "gridview", number: "12979"},
+ {source: "asp.net", target: "html", number: "11383"},
+ {source: "asp.net", target: "iis", number: "9636"},
+ {source: "asp.net", target: "ajax", number: "9259"},
+ {source: "objective-c", target: "ios", number: "153487"},
+ {source: "objective-c", target: "iphone", number: "73265"},
+ {source: "objective-c", target: "xcode", number: "32281"},
+ {source: "objective-c", target: "uitableview", number: "18832"},
+ {source: "objective-c", target: "cocoa", number: "17915"},
+ {source: "objective-c", target: "cocoa-touch", number: "17287"},
+ {source: "objective-c", target: "osx", number: "10172"},
+ {source: "objective-c", target: "ipad", number: "9625"},
+ {source: "objective-c", target: "swift", number: "8591"},
+ {source: "objective-c", target: "core-data", number: "7623"},
+ {source: "ruby-on-rails", target: "ruby", number: "85980"},
+ {source: "ruby-on-rails", target: "ruby-on-rails-3", number: "34078"},
+ {source: "ruby-on-rails", target: "ruby-on-rails-4", number: "24432"},
+ {source: "ruby-on-rails", target: "activerecord", number: "17707"},
+ {source: "ruby-on-rails", target: "javascript", number: "12590"},
+ {source: "ruby-on-rails", target: "devise", number: "10623"},
+ {source: "ruby-on-rails", target: "jquery", number: "10442"},
+ {source: "ruby-on-rails", target: "rspec", number: "9844"},
+ {source: "ruby-on-rails", target: "heroku", number: "9178"},
+ {source: "ruby-on-rails", target: "rubygems", number: "7345"},
+ {source: ".net", target: "c#", number: "151321"},
+ {source: ".net", target: "asp.net", number: "21052"},
+ {source: ".net", target: "winforms", number: "15710"},
+ {source: ".net", target: "vb.net", number: "14280"},
+ {source: ".net", target: "wpf", number: "12984"},
+ {source: ".net", target: "wcf", number: "8117"},
+ {source: ".net", target: "linq", number: "7457"},
+ {source: ".net", target: "entity-framework", number: "6832"},
+ {source: ".net", target: "visual-studio", number: "6491"},
+ {source: ".net", target: "asp.net-mvc", number: "6484"},
+ {source: "c", target: "c++", number: "31619"},
+ {source: "c", target: "linux", number: "19709"},
+ {source: "c", target: "arrays", number: "17216"},
+ {source: "c", target: "pointers", number: "16377"},
+ {source: "c", target: "gcc", number: "9551"},
+ {source: "c", target: "string", number: "8702"},
+ {source: "c", target: "struct", number: "8371"},
+ {source: "c", target: "sockets", number: "6022"},
+ {source: "c", target: "windows", number: "5153"},
+ {source: "c", target: "multithreading", number: "4574"},
+ {source: "angularjs", target: "javascript", number: "101770"},
+ {source: "angularjs", target: "html", number: "16060"},
+ {source: "angularjs", target: "angularjs-directive", number: "15303"},
+ {source: "angularjs", target: "jquery", number: "13397"},
+ {source: "angularjs", target: "ionic-framework", number: "11360"},
+ {source: "angularjs", target: "angularjs-ng-repeat", number: "8150"},
+ {source: "angularjs", target: "json", number: "8106"},
+ {source: "angularjs", target: "angularjs-scope", number: "8066"},
+ {source: "angularjs", target: "angular-ui-router", number: "7705"},
+ {source: "angularjs", target: "node.js", number: "7648"},
+ {source: "arrays", target: "php", number: "50553"},
+ {source: "arrays", target: "java", number: "33554"},
+ {source: "arrays", target: "javascript", number: "33276"},
+ {source: "arrays", target: "c", number: "17216"},
+ {source: "arrays", target: "c++", number: "16800"},
+ {source: "arrays", target: "c#", number: "11644"},
+ {source: "arrays", target: "python", number: "11430"},
+ {source: "arrays", target: "multidimensional-array", number: "11277"},
+ {source: "arrays", target: "string", number: "10862"},
+ {source: "arrays", target: "json", number: "10704"},
+ {source: "iphone", target: "ios", number: "93532"},
+ {source: "iphone", target: "objective-c", number: "73265"},
+ {source: "iphone", target: "xcode", number: "26775"},
+ {source: "iphone", target: "ipad", number: "18053"},
+ {source: "iphone", target: "cocoa-touch", number: "15223"},
+ {source: "iphone", target: "uitableview", number: "12938"},
+ {source: "iphone", target: "ios4", number: "6493"},
+ {source: "iphone", target: "swift", number: "5896"},
+ {source: "iphone", target: "core-data", number: "5032"},
+ {source: "iphone", target: "ios5", number: "4534"},
+ {source: "sql-server", target: "sql", number: "83785"},
+ {source: "sql-server", target: "tsql", number: "28345"},
+ {source: "sql-server", target: "c#", number: "23762"},
+ {source: "sql-server", target: "sql-server-2008", number: "21481"},
+ {source: "sql-server", target: "stored-procedures", number: "9360"},
+ {source: "sql-server", target: "asp.net", number: "9107"},
+ {source: "sql-server", target: "database", number: "8930"},
+ {source: "sql-server", target: "sql-server-2005", number: "7776"},
+ {source: "sql-server", target: "sql-server-2012", number: "6462"},
+ {source: "sql-server", target: "mysql", number: "5281"},
+ {source: "json", target: "javascript", number: "45355"},
+ {source: "json", target: "jquery", number: "30234"},
+ {source: "json", target: "php", number: "28494"},
+ {source: "json", target: "java", number: "23170"},
+ {source: "json", target: "android", number: "18680"},
+ {source: "json", target: "c#", number: "14328"},
+ {source: "json", target: "ajax", number: "14156"},
+ {source: "json", target: "arrays", number: "10704"},
+ {source: "json", target: "python", number: "9669"},
+ {source: "json", target: "angularjs", number: "8106"},
+ {source: "ruby", target: "ruby-on-rails", number: "85980"},
+ {source: "ruby", target: "ruby-on-rails-3", number: "15417"},
+ {source: "ruby", target: "ruby-on-rails-4", number: "11021"},
+ {source: "ruby", target: "rubygems", number: "9027"},
+ {source: "ruby", target: "activerecord", number: "6513"},
+ {source: "ruby", target: "rspec", number: "6167"},
+ {source: "ruby", target: "arrays", number: "5862"},
+ {source: "ruby", target: "regex", number: "4410"},
+ {source: "ruby", target: "sinatra", number: "3676"},
+ {source: "ruby", target: "javascript", number: "3646"},
+ {source: "r", target: "ggplot2", number: "15656"},
+ {source: "r", target: "dataframe", number: "10498"},
+ {source: "r", target: "plot", number: "8097"},
+ {source: "r", target: "shiny", number: "6492"},
+ {source: "r", target: "data.table", number: "5259"},
+ {source: "r", target: "dplyr", number: "4596"},
+ {source: "r", target: "matrix", number: "4277"},
+ {source: "r", target: "loops", number: "2905"},
+ {source: "r", target: "regex", number: "2874"},
+ {source: "r", target: "function", number: "2752"},
+ {source: "ajax", target: "jquery", number: "93013"},
+ {source: "ajax", target: "javascript", number: "73712"},
+ {source: "ajax", target: "php", number: "47396"},
+ {source: "ajax", target: "html", number: "14931"},
+ {source: "ajax", target: "json", number: "14156"},
+ {source: "ajax", target: "asp.net", number: "9259"},
+ {source: "ajax", target: "c#", number: "6465"},
+ {source: "ajax", target: "mysql", number: "6106"},
+ {source: "ajax", target: "ruby-on-rails", number: "5775"},
+ {source: "ajax", target: "asp.net-mvc", number: "5618"},
+ {source: "node.js", target: "javascript", number: "60655"},
+ {source: "node.js", target: "express", number: "26859"},
+ {source: "node.js", target: "mongodb", number: "18656"},
+ {source: "node.js", target: "mongoose", number: "11207"},
+ {source: "node.js", target: "npm", number: "8372"},
+ {source: "node.js", target: "socket.io", number: "7799"},
+ {source: "node.js", target: "angularjs", number: "7648"},
+ {source: "node.js", target: "json", number: "4592"},
+ {source: "node.js", target: "mysql", number: "3406"},
+ {source: "node.js", target: "asynchronous", number: "3336"},
+ {source: "regex", target: "php", number: "24571"},
+ {source: "regex", target: "javascript", number: "22947"},
+ {source: "regex", target: "java", number: "16960"},
+ {source: "regex", target: "python", number: "16337"},
+ {source: "regex", target: "c#", number: "13288"},
+ {source: "regex", target: "string", number: "10281"},
+ {source: "regex", target: "perl", number: "6664"},
+ {source: "regex", target: "jquery", number: "4628"},
+ {source: "regex", target: "html", number: "4521"},
+ {source: "regex", target: "ruby", number: "4410"},
+ {source: "regex", target: "replace", number: "4293"},
+ {source: "xml", target: "c#", number: "22271"},
+ {source: "xml", target: "android", number: "21898"},
+ {source: "xml", target: "xslt", number: "16265"},
+ {source: "xml", target: "php", number: "14939"},
+ {source: "xml", target: "xpath", number: "8902"},
+ {source: "xml", target: "xsd", number: "7326"},
+ {source: "xml", target: "javascript", number: "6462"},
+ {source: "xml", target: "python", number: "5959"},
+ {source: "xml", target: "xml-parsing", number: "5497"},
+ {source: "asp.net-mvc", target: "c#", number: "55402"},
+ {source: "asp.net-mvc", target: "asp.net", number: "28459"},
+ {source: "asp.net-mvc", target: "jquery", number: "16693"},
+ {source: "asp.net-mvc", target: "asp.net-mvc-4", number: "15809"},
+ {source: "asp.net-mvc", target: "razor", number: "13116"},
+ {source: "asp.net-mvc", target: "javascript", number: "11091"},
+ {source: "asp.net-mvc", target: "asp.net-mvc-3", number: "10936"},
+ {source: "asp.net-mvc", target: "entity-framework", number: "10238"},
+ {source: "asp.net-mvc", target: ".net", number: "6484"},
+ {source: "asp.net-mvc", target: "ajax", number: "5618"},
+]; 
+
+var nodes = {};
+
+links.forEach(function(link) {
+  link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
+  link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
+});
+
+var width = 1300,
+    height = 580;
+
+var force = d3.layout.force()
+    .nodes(d3.values(nodes))
+    .links(links)
+    .size([width, height])
+    .linkDistance(60)
+    .charge(-300)
+    .on("tick", tick)
+    .start();
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+svg.append("defs").selectAll("marker")
+    .data(["suit", "licensing", "resolved"])
+  .enter().append("marker")
+    .attr("id", function(d) { return d; })
+    .attr("viewBox", "0 -5 10 10")
+    .attr("refX", 15)
+    .attr("refY", -1.5)
+    .attr("markerWidth", 6)
+    .attr("markerHeight", 6)
+    .attr("orient", "auto")
+  .append("path")
+    .attr("d", "M0,-5L10,0L0,5");
+
+var path = svg.append("g").selectAll("path")
+    .data(force.links())
+  .enter().append("path")
+    .attr("class", function(d) { return "link " + d.type; })
+    .attr("marker-end", function(d) { return "url(#" + d.type + ")"; });
+
+var circle = svg.append("g").selectAll("circle")
+    .data(force.nodes())
+  .enter().append("circle")
+    .attr("r", 10)
+    .call(force.drag);
+
+var text = svg.append("g").selectAll("text")
+    .data(force.nodes())
+  .enter().append("text")
+    .attr("x", 8)
+    .attr("y", ".31em")
+    .text(function(d) { return d.name; });
+
+function tick() {
+  path.attr("d", linkArc);
+  circle.attr("transform", transform);
+  text.attr("transform", transform);
+}
+
+function linkArc(d) {
+  var dx = d.target.x - d.source.x,
+      dy = d.target.y - d.source.y,
+      dr = Math.sqrt(dx * dx + dy * dy);
+  return "M" + d.source.x + "," + d.source.y + "A" + dr + "," + dr + " 0 0,1 " + d.target.x + "," + d.target.y;
+}
+
+function transform(d) {
+  return "translate(" + d.x + "," + d.y + ")";
+}
+
+</script>
+
